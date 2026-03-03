@@ -1,0 +1,183 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>情報工学科専門科目　印象まとめ</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        body { 
+            font-family: 'Helvetica Neue', Arial, 'Hiragino Kaku Gothic ProN', 'Hiragino Sans', Meiryo, sans-serif; 
+            background-color: #f8fafc;
+            /* iOSのスクロールバウンス対策 */
+            overscroll-behavior-y: none;
+        }
+        .card-enter { 
+            animation: fadeIn 0.4s cubic-bezier(0.4, 0, 0.2, 1) forwards; 
+            opacity: 0;
+            transform: translateY(10px);
+        }
+        @keyframes fadeIn {
+            to { opacity: 1; transform: translateY(0); }
+        }
+        /* スクロールバー非表示（横スクロール用） */
+        .hide-scrollbar::-webkit-scrollbar { display: none; }
+        .hide-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+    </style>
+</head>
+<body class="text-slate-800 antialiased pb-20">
+
+    <meta name="robots" content="noindex, nofollow, noarchive, nosnippet, noimageindex">
+    <meta name="googlebot" content="noindex, nofollow, noarchive, nosnippet, noimageindex">
+    <!-- ヘッダー -->
+    <header class="bg-white shadow-sm sticky top-0 z-50 pt-safe">
+        <div class="px-4 py-4 md:px-8 max-w-3xl mx-auto">
+            <h1 class="text-xl font-bold text-slate-900 leading-tight">情報工学科専門科目　印象まとめ</h1>
+            <p class="text-xs text-slate-500 mt-1">※評価や難易度は木村の主観です．</p>
+        </div>
+        
+        <!-- フィルターボタン群（横スクロール可能） -->
+        <div class="border-t border-slate-100 bg-white/95 backdrop-blur">
+            <div class="flex overflow-x-auto hide-scrollbar px-4 py-3 gap-2 max-w-3xl mx-auto" id="filters">
+                <button onclick="filterCards('all')" class="filter-btn shrink-0 px-4 py-2 rounded-full text-sm font-semibold bg-blue-600 text-white shadow-sm transition-colors">すべて</button>
+                <button onclick="filterCards('recommend')" class="filter-btn shrink-0 px-4 py-2 rounded-full text-sm font-semibold bg-slate-100 text-slate-700 border border-slate-200 transition-colors">🌟 重要（個人的）</button>
+                <button onclick="filterCards('programming')" class="filter-btn shrink-0 px-4 py-2 rounded-full text-sm font-semibold bg-slate-100 text-slate-700 border border-slate-200 transition-colors">💻 プログラミング</button>
+                <button onclick="filterCards('lecture')" class="filter-btn shrink-0 px-4 py-2 rounded-full text-sm font-semibold bg-slate-100 text-slate-700 border border-slate-200 transition-colors">📖 座学</button>
+                <button onclick="filterCards('groupwork')" class="filter-btn shrink-0 px-4 py-2 rounded-full text-sm font-semibold bg-slate-100 text-slate-700 border border-slate-200 transition-colors">👥 グループワークあり</button>
+                <button onclick="filterCards('math')" class="filter-btn shrink-0 px-4 py-2 rounded-full text-sm font-semibold bg-slate-100 text-slate-700 border border-slate-200 transition-colors">📐 数学</button>
+                <button onclick="filterCards('easy')" class="filter-btn shrink-0 px-4 py-2 rounded-full text-sm font-semibold bg-slate-100 text-slate-700 border border-slate-200 transition-colors">☕ 単位取りやすい</button>
+                <button onclick="filterCards('unknown')" class="filter-btn shrink-0 px-4 py-2 rounded-full text-sm font-semibold bg-slate-100 text-slate-700 border border-slate-200 transition-colors">❓ 未履修</button>
+            </div>
+        </div>
+    </header>
+
+    <main class="p-4 md:p-8 max-w-3xl mx-auto">
+        <!-- カード一覧コンテナ -->
+        <div id="card-container" class="space-y-4">
+            <!-- JSで動的に生成 -->
+        </div>
+    </main>
+
+    <script>
+        // タグ定義（表示名を変えると全カードに反映）
+        const tagDefinitions = {
+            recommend: "🌟 重要（個人的）",
+            programming: "💻 プログラミング",
+            lecture: "📖 座学",
+            groupwork: "👥 グループワークあり",
+            easy: "☕ 単位取りやすい",
+            unknown: "❓ 未履修",
+            math: "📐 数学"
+        };
+
+        // タグ指定を簡単にするヘルパー（例: t('lecture recommend')）
+        const t = (tagText = "") => tagText.split(/\s+/).filter(Boolean);
+
+        // データ定義
+        const subjects = [
+            // 演習・基礎科目群
+            { group: "演習・基礎科目群", name: "プロジェクトマネジメント", tags: t("groupwork"), comment: "他学部と合同でチームマネジメントを実践する．個人的にはあんまり好きじゃなかった．" },
+            { group: "演習・基礎科目群", name: "情報工学概論", tags: t("recommend lecture"), comment: "実質的な研究室紹介．多分最初から履修が組まれている．今後のためにちゃんと聞いておいた方が良い．" },
+            
+            // 基幹科目群
+            { group: "基幹科目群", name: "データ構造とアルゴリズム", tags: t("recommend lecture"), comment: "情報工学の中で最重要．Aクラス(東野先生)は成績評価甘め．Bクラス(福田先生)は成績評価がシビア．多分最初から履修が組まれていてクラスは選べない．Bクラスの人は頑張ってね．" },
+            { group: "基幹科目群", name: "論理設計演習", tags: t("programming"), comment: "ハードウェアの回路設計．授業内しか演習できないため持ち帰りの課題はなし．3回に1度くらい実験レポートあり．昨年度に引き続き木村がLAをやる予定．" },
+            { group: "基幹科目群", name: "ヒューマンインタフェース", tags: t("lecture groupwork"), comment: "人間にとって使いやすいシステムとは何かを学ぶ．少し心理学的な要素あり．プログラミング課題は無し．小レポート多めなので嫌な人は避けたほうが無難．" },
+            { group: "基幹科目群", name: "ソフトウェアエンジニアリング", tags: t("lecture easy recommend"), comment: "開発プロセスを学ぶ．手は動かさない．単位は比較的取りやすい．" },
+            { group: "基幹科目群", name: "基礎システムプログラミング", tags: t("programming recommend unknown"), comment: "今年からの科目（マイナーチェンジ）．C言語の基本．Pythonより少し難しいが，力になるのでやっておいて損は無い．特にハードウェア寄りに興味がある人は履修しておこう．" },
+            { group: "基幹科目群", name: "データ解析演習Ⅰ", tags: t("programming recommend math"), comment: "データサイエンスの基本手法である多変量解析について学ぶ．プログラミング主体だが理論解説も割とがっつりある．数式でビビらなければ単位は取れる．木村は単位を取ったが内容はよく分かっていない．" },
+            { group: "基幹科目群", name: "産業と情報通信技術", tags: t("unknown"), comment: "毎回外部から企業の人が来て講演してくれるらしい．" },
+            { group: "基幹科目群", name: "AI実践演習", tags: t("unknown"), comment: "今年から始まる科目（完全新設）．何するのかよく分からん．" },
+
+            // 分野科目群
+            { group: "分野科目群", name: "オブジェクト指向プログラミング", tags: t("programming recommend"), comment: "Javaを使ってオブジェクト指向というソフトウェアの設計思想を学ぶ．内容は少し難しいが社会に出てからも使う（システム系の仕事だと）ので履修推奨．" },
+            { group: "分野科目群", name: "インタラクティブ・アプリケーション・プログラミング", tags: t("programming unknown"), comment: "Unityでゲーム制作するらしい．人気で毎年抽選．" },
+            { group: "分野科目群", name: "Webデザイン", tags: t("programming easy unknown"), comment: "Webサイトを構成するHTML, CSS, JavaScriptの基本について学ぶ．そんなにハードではないらしい．" },
+            { group: "分野科目群", name: "コンピュータネットワークⅡ", tags: t("lecture easy"), comment: "シラバスには「チャットアプリを作る」みたいなことが書いてあるが，実際にはやらない．ほぼ基本/応用情報の範囲の座学．出席なし，課題とテストで単位は取れる．" },
+            { group: "分野科目群", name: "コンピュータアーキテクチャⅡ", tags: t("lecture easy"), comment: "前期のコンピュータアーキテクチャⅠの続き．CPUのパイプライン処理について学ぶ．出席して課題出してテスト受ければ単位は取れる．" },
+            { group: "分野科目群", name: "オペレーティングシステム", tags: t("lecture recommend easy"), comment: "OSの構成の話．Windows, Mac, LinuxなどのOSがどのようにプログラムを処理しているかを学ぶ．内容自体は少し難しいが知っておくと役に立つ．出席・課題・テストをやっとけば単位は取れる．" },
+            { group: "分野科目群", name: "データ解析演習Ⅱ", tags: t("programming math"), comment: "データ解析演習Ⅰの続き．難易度はⅠと同様．" },
+            { group: "分野科目群", name: "最適化理論", tags: t("lecture math"), comment: "機械学習などに必要な数学を学ぶ．微積や線形代数をたくさん使うので数学嫌いならやめとこう．" },
+            { group: "分野科目群", name: "AIプログラミングⅠ", tags: t("programming groupwork unknown"), comment: "今年からの科目（マイナーチェンジ）．Pythonで古典的なゲームAIを作るらしい．豊田くんがLAをやる予定．" },
+            { group: "分野科目群", name: "情報セキュリティⅡ", tags: t("unknown"), comment: "履修したことないからわからん．" },
+            { group: "分野科目群", name: "ユーザーエクスペリエンス設計", tags: t("unknown"), comment: "履修したことないからわからん．" }
+        ];
+
+        const container = document.getElementById('card-container');
+        const filterBtns = document.querySelectorAll('.filter-btn');
+        const filterTagOrder = ['recommend', 'programming', 'lecture', 'groupwork', 'math', 'easy', 'unknown'];
+        let activeFilter = 'all';
+
+        function filterCards(filterType) {
+            activeFilter = filterType;
+            renderCards(activeFilter);
+        }
+
+        function renderCards(filterType = activeFilter) {
+            container.innerHTML = '';
+            
+            // ボタンのスタイル更新（アクティブなものを目立たせる）
+            filterBtns.forEach(btn => {
+                if (btn.getAttribute('onclick').includes(`'${filterType}'`)) {
+                    btn.className = "filter-btn shrink-0 px-4 py-2 rounded-full text-sm font-semibold bg-blue-600 text-white shadow-sm transition-colors";
+                } else {
+                    btn.className = "filter-btn shrink-0 px-4 py-2 rounded-full text-sm font-semibold bg-slate-100 text-slate-700 border border-slate-200 transition-colors";
+                }
+            });
+
+            // フィルタリング
+            const filtered = filterType === 'all' 
+                ? subjects 
+                : subjects.filter(s => s.tags.includes(filterType));
+
+            // 結果が0件の場合
+            if (filtered.length === 0) {
+                container.innerHTML = `<div class="text-center py-10 text-slate-500">該当する科目がありません</div>`;
+                return;
+            }
+
+            // グループごとに分けて表示
+            let currentGroup = "";
+            
+            filtered.forEach((sub, index) => {
+                // グループ見出しの挿入
+                if (currentGroup !== sub.group) {
+                    currentGroup = sub.group;
+                    container.innerHTML += `<h2 class="text-sm font-bold text-slate-400 mt-6 mb-2 flex items-center gap-2 px-1"><span class="w-1 h-4 bg-blue-400 rounded"></span>${currentGroup}</h2>`;
+                }
+
+                const delay = (index % 10) * 0.05; // アニメーションの遅延
+                const orderedTags = [...sub.tags].sort((a, b) => {
+                    const indexA = filterTagOrder.indexOf(a);
+                    const indexB = filterTagOrder.indexOf(b);
+                    if (indexA === -1 && indexB === -1) return 0;
+                    if (indexA === -1) return 1;
+                    if (indexB === -1) return -1;
+                    return indexA - indexB;
+                });
+                const tagsHtml = orderedTags.map(tag => 
+                    `<button onclick="filterCards('${tag}')" class="inline-flex items-center px-2 py-0.5 rounded text-xs font-medium bg-slate-100 text-slate-600 border border-slate-200 hover:bg-slate-200 transition-colors">${tagDefinitions[tag] || tag}</button>`
+                ).join('');
+
+                const card = `
+                    <div class="bg-white rounded-2xl shadow-sm border border-slate-200 p-4 card-enter overflow-hidden relative" style="animation-delay: ${delay}s">
+                        <div class="flex justify-between items-start gap-3">
+                            <div class="flex-1">
+                                <h3 class="text-base font-bold text-slate-900 leading-tight mb-2">${sub.name}</h3>
+                                <div class="flex flex-wrap gap-1.5 mb-3">
+                                    ${tagsHtml}
+                                </div>
+                                <p class="text-sm text-slate-600 leading-relaxed">${sub.comment}</p>
+                            </div>
+                        </div>
+                    </div>
+                `;
+                container.innerHTML += card;
+            });
+        }
+
+        // 初期表示
+        renderCards('all');
+    </script>
+</body>
+</html>
